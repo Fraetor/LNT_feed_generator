@@ -2,7 +2,9 @@
 
 A feed generator for
 [LightNovelTranslation.com](https://lightnovelstranslations.com/latest-updates/)
-that scrapes the latest updates page and turns it into an Atom feed.
+that scrapes the [latest updates
+page](https://lightnovelstranslations.com/latest-updates/) and turns it into an
+Atom feed.
 
 ## Resources
 
