@@ -6,6 +6,8 @@ that scrapes the [latest updates
 page](https://lightnovelstranslations.com/latest-updates/) and turns it into an
 Atom feed.
 
+The atom feed can found at <https://vega.frost.cx/feed/lightnoveltranslations.atom>
+
 ## Resources
 
 - [RSS and Atom comparison, with nice
