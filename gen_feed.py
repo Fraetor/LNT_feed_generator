@@ -87,11 +87,11 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Generate atom feed for lightnoveltranslations.com"
     )
-    parser.add_argument("feed_path", help="the file where the feed should be written")
+    parser.add_argument("feed_path", help="where the feed should be written")
     return parser.parse_args()
 
 
 scraping_url = "https://lightnovelstranslations.com/latest-updates/"
 args = parse_args()
 
-generate_feed(args["feed_path"], scraping_url)
+generate_feed(args.feed_path, scraping_url)
