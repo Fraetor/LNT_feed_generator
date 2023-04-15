@@ -46,7 +46,7 @@ def get_entries(scraping_url: str):
 def generate_feed(feed_path: str, scraping_url: str):
     # Build XML atom feed.
     feed = ET.Element("feed", {"xmlns": "http://www.w3.org/2005/Atom"})
-    ET.SubElement(feed, "title").text = "Light Novel Translation"
+    ET.SubElement(feed, "title").text = "Light Novel Translations"
     ET.SubElement(
         feed,
         "link",
@@ -76,7 +76,10 @@ def generate_feed(feed_path: str, scraping_url: str):
         ET.SubElement(entry_elem, "link", {"href": entry["url"]})
         ET.SubElement(entry_elem, "id").text = entry["id"]
         ET.SubElement(entry_elem, "updated").text = entry["date"]
-        # ET.SubElement(entry_elem, "summary").text = ""  # I don't think we need this.
+        ET.SubElement(
+            entry_elem, "summary", {"type": "html"}
+        ).text = f'<a href="{entry["url"]}">Read the chapter on lightnoveltranslations.com</a>'
+
         feed.append(entry_elem)
 
     # Write XML document.
