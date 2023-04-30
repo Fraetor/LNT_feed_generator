@@ -11,7 +11,7 @@ from uuid import uuid4
 
 
 def slugify(s: str) -> str:
-    return re.sub(r"[^a-z0-9]", "-", s.casefold()).strip("-")
+    return re.sub(r"[^a-z0-9]+", "-", s.casefold()).strip("-")
 
 
 def get_entries(scraping_url: str):
