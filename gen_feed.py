@@ -11,7 +11,7 @@ from uuid import uuid4
 
 
 def slugify(s: str) -> str:
-    return re.sub(r"[^a-z0-9]", "-", s.casefold(s)).strip("-")
+    return re.sub(r"[^a-z0-9]", "-", s.casefold()).strip("-")
 
 
 def get_entries(scraping_url: str):
@@ -84,7 +84,7 @@ def generate_feed(feed_path: str, scraping_url: str):
         ET.SubElement(entry_elem, "updated").text = entry["date"]
         ET.SubElement(
             entry_elem, "summary", {"type": "html"}
-        ).text = f'<a href="{entry["url"]}">Read the chapter on lightnoveltranslations.com</a>'
+        ).text = f'<a href="{entry["url"]}">Read on lightnoveltranslations.com</a>'
         ET.SubElement(
             entry_elem,
             "category",
