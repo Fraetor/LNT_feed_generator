@@ -5,8 +5,13 @@ import requests
 import argparse
 from datetime import datetime, timezone
 import sqlite3
+import re
 import xml.etree.ElementTree as ET
 from uuid import uuid4
+
+
+def slugify(s: str) -> str:
+    return re.sub(r"[^a-z0-9]", "-", s.casefold(s)).strip("-")
 
 
 def get_entries(scraping_url: str):
@@ -40,6 +45,7 @@ def get_entries(scraping_url: str):
             "title": entry_title,
             "url": entry_url,
             "date": entry_date,
+            "category": story_title,
         }
 
 
@@ -79,7 +85,11 @@ def generate_feed(feed_path: str, scraping_url: str):
         ET.SubElement(
             entry_elem, "summary", {"type": "html"}
         ).text = f'<a href="{entry["url"]}">Read the chapter on lightnoveltranslations.com</a>'
-
+        ET.SubElement(
+            entry_elem,
+            "category",
+            {"term": slugify(entry["category"]), "label": entry["category"]},
+        )
         feed.append(entry_elem)
 
     # Write XML document.
@@ -93,8 +103,7 @@ def parse_args():
     parser.add_argument("feed_path", help="where the feed should be written")
     return parser.parse_args()
 
-
-scraping_url = "https://lightnovelstranslations.com/latest-updates/"
-args = parse_args()
-
-generate_feed(args.feed_path, scraping_url)
+if __name__ == "__main__":
+    scraping_url = "https://lightnovelstranslations.com/latest-updates/"
+    args = parse_args()
+    generate_feed(args.feed_path, scraping_url)
