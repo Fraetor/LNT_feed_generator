@@ -16,7 +16,7 @@ def slugify(s: str) -> str:
 
 def get_entries(scraping_url: str):
     db = sqlite3.connect("feed.db")
-    db.execute("CREATE TABLE IF NOT EXISTS lnt_feed(id, title, url, date);")
+    db.execute("CREATE TABLE IF NOT EXISTS lnt_feed(id, url, date);")
     html = requests.get(scraping_url).text
     soup = BeautifulSoup(html, "html.parser")
     latest_updates = soup.find(class_="latest-updates")
@@ -33,8 +33,8 @@ def get_entries(scraping_url: str):
             entry_id = uuid4().urn
             entry_date = datetime.now(tz=timezone.utc).isoformat(timespec="seconds")
             db.execute(
-                "INSERT INTO lnt_feed VALUES(?, ?, ?, ?);",
-                (entry_id, entry_title, entry_url, entry_date),
+                "INSERT INTO lnt_feed VALUES(?, ?, ?);",
+                (entry_id, entry_url, entry_date),
             )
             db.commit()
         else:
