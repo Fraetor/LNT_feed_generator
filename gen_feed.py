@@ -93,7 +93,9 @@ def generate_feed(feed_path: str, scraping_url: str):
         feed.append(entry_elem)
 
     # Write XML document.
-    ET.ElementTree(feed).write(feed_path, "utf-8", xml_declaration=True)
+    with open(feed_path, "wt", encoding="utf-8") as fp:
+        fp.write("<?xml version='1.0' encoding='utf-8'?>\n<?xml-stylesheet href='rss-style.xsl' type='text/xsl'?>\n"
+        ET.ElementTree(feed).write(fp, encoding="unicode", xml_declaration=False)
 
 
 def parse_args():
