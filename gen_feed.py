@@ -18,7 +18,7 @@ def get_entries(scraping_url: str, database_path: str):
     db = sqlite3.connect(database_path)
     db.execute("CREATE TABLE IF NOT EXISTS lnt_feed(id, url, date);")
     headers = {
-        "User-Agent": "FeedGenerator/1.0 (https://github.com/Fraetor/LNT_feed_generator)"
+        "User-Agent": "Mozilla/5.0 (compatible; LNTFeedGenerator/1.0 +https://github.com/Fraetor/LNT_feed_generator)"
     }
     html = requests.get(scraping_url, headers=headers, timeout=300).text
     soup = BeautifulSoup(html, "html.parser")
