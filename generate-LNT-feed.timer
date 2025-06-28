@@ -4,6 +4,7 @@ Documentation=https://github.com/Fraetor/LNT_feed_generator
 
 [Timer]
 OnCalendar=*:00/30:00
+AccuracySec=1μs
 RandomizedDelaySec=900
 FixedRandomDelay=true
 Persistent=true
