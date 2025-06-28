@@ -3,10 +3,9 @@ Description=Regularly regenerate the lightNovelTranslations Atom feed.
 Documentation=https://github.com/Fraetor/LNT_feed_generator
 
 [Timer]
-OnCalendar=*:00
+OnCalendar=0,12:00
 AccuracySec=1μs
-RandomizedDelaySec=3000
-FixedRandomDelay=true
+RandomizedDelaySec=40000
 Persistent=true
 
 [Install]
