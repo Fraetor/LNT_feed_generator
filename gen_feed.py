@@ -20,6 +20,10 @@ def get_entries(scraping_url: str, database_path: str):
     html = requests.get(scraping_url, headers=headers, timeout=300).text
     soup = BeautifulSoup(html, "html.parser")
     latest_updates = soup.find(class_="latest-updates")
+    if latest_updates is None:
+        raise ValueError(
+            f"Couldn't find latest updates in returned HTML:\n\n{html}"
+        )
     for entry_row in latest_updates.find_all(class_="content_list_latest-wrap-item"):
         # Create title by combining name of story and name of chapter.
         story_title = entry_row.find(title="Title").a.string
