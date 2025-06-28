@@ -1,4 +1,4 @@
-#! /usr/bin/env python3
+#!/usr/bin/env python3
 
 from bs4 import BeautifulSoup
 import requests
@@ -9,15 +9,15 @@ import re
 import xml.etree.ElementTree as ET
 from uuid import uuid4
 
-
 def slugify(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.casefold()).strip("-")
 
 
-def get_entries(scraping_url: str):
-    db = sqlite3.connect("feed.db")
+def get_entries(scraping_url: str, database_path: str):
+    db = sqlite3.connect(database_path)
     db.execute("CREATE TABLE IF NOT EXISTS lnt_feed(id, url, date);")
-    html = requests.get(scraping_url).text
+    headers = {"User-Agent": "FeedGenerator/1.0 (https://github.com/Fraetor/LNT_feed_generator)"}
+    html = requests.get(scraping_url, headers=headers, timeout=300).text
     soup = BeautifulSoup(html, "html.parser")
     latest_updates = soup.find(class_="latest-updates")
     for entry_row in latest_updates.find_all(class_="content_list_latest-wrap-item"):
@@ -27,7 +27,7 @@ def get_entries(scraping_url: str):
         entry_title = f"{story_title} | {chapter}"
         entry_url = entry_row.find(title="Releases").a["href"]
         record = db.execute(
-            "SELECT id, date FROM lnt_feed WHERE url = ?;", [entry_url]
+            "SELECT id, date FROM lnt_feed WHERE url = ?;", (entry_url,)
         ).fetchone()
         if not record:
             entry_id = uuid4().urn
@@ -49,7 +49,7 @@ def get_entries(scraping_url: str):
         }
 
 
-def generate_feed(feed_path: str, scraping_url: str):
+def generate_feed(feed_path: str, scraping_url: str, database_path: str):
     # Build XML atom feed.
     feed = ET.Element("feed", {"xmlns": "http://www.w3.org/2005/Atom"})
     ET.SubElement(feed, "title").text = "Light Novel Translations"
@@ -76,7 +76,7 @@ def generate_feed(feed_path: str, scraping_url: str):
     ).text = "Horrible hand-coded feed generator"
 
     # Loop to generate and add entries.
-    for entry in get_entries(scraping_url):
+    for entry in get_entries(scraping_url, database_path):
         entry_elem = ET.Element("entry")
         ET.SubElement(entry_elem, "title").text = entry["title"]
         ET.SubElement(entry_elem, "link", {"href": entry["url"]})
@@ -94,6 +94,7 @@ def generate_feed(feed_path: str, scraping_url: str):
 
     # Write XML document.
     with open(feed_path, "wt", encoding="utf-8") as fp:
+        # Manually write XML header to allow adding a stylesheet.
         fp.write("<?xml version='1.0' encoding='utf-8'?>\n<?xml-stylesheet href='rss-style.xsl' type='text/xsl'?>\n")
         ET.ElementTree(feed).write(fp, encoding="unicode", xml_declaration=False)
 
@@ -103,9 +104,10 @@ def parse_args():
         description="Generate atom feed for lightnoveltranslations.com"
     )
     parser.add_argument("feed_path", help="where the feed should be written")
+    parser.add_argument("db_path", help="path to the SQLite database")
     return parser.parse_args()
 
 if __name__ == "__main__":
     scraping_url = "https://lightnovelstranslations.com/latest-updates/"
     args = parse_args()
-    generate_feed(args.feed_path, scraping_url)
+    generate_feed(args.feed_path, scraping_url, args.db_path)
