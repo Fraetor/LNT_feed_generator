@@ -9,6 +9,7 @@ import re
 import xml.etree.ElementTree as ET
 from uuid import uuid4
 
+
 def slugify(s: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", s.casefold()).strip("-")
 
@@ -16,14 +17,14 @@ def slugify(s: str) -> str:
 def get_entries(scraping_url: str, database_path: str):
     db = sqlite3.connect(database_path)
     db.execute("CREATE TABLE IF NOT EXISTS lnt_feed(id, url, date);")
-    headers = {"User-Agent": "FeedGenerator/1.0 (https://github.com/Fraetor/LNT_feed_generator)"}
+    headers = {
+        "User-Agent": "FeedGenerator/1.0 (https://github.com/Fraetor/LNT_feed_generator)"
+    }
     html = requests.get(scraping_url, headers=headers, timeout=300).text
     soup = BeautifulSoup(html, "html.parser")
     latest_updates = soup.find(class_="latest-updates")
     if latest_updates is None:
-        raise ValueError(
-            f"Couldn't find latest updates in returned HTML:\n\n{html}"
-        )
+        raise ValueError(f"Couldn't find latest updates in returned HTML:\n\n{html}")
     for entry_row in latest_updates.find_all(class_="content_list_latest-wrap-item"):
         # Create title by combining name of story and name of chapter.
         story_title = entry_row.find(title="Title").a.string
@@ -72,9 +73,9 @@ def generate_feed(feed_path: str, scraping_url: str, database_path: str):
     author = ET.SubElement(feed, "author")
     ET.SubElement(author, "name").text = "Light Novel Translations"
     ET.SubElement(author, "uri").text = "https://lightnovelstranslations.com/"
-    ET.SubElement(
-        feed, "icon"
-    ).text = "https://i0.wp.com/lightnovelstranslations.com/wp-content/uploads/2020/12/cropped-favicon-32px.png"
+    ET.SubElement(feed, "icon").text = (
+        "https://i0.wp.com/lightnovelstranslations.com/wp-content/uploads/2020/12/cropped-favicon-32px.png"
+    )
     ET.SubElement(
         feed, "generator", {"uri": "https://github.com/Fraetor/LNT_feed_generator"}
     ).text = "Horrible hand-coded feed generator"
@@ -86,9 +87,9 @@ def generate_feed(feed_path: str, scraping_url: str, database_path: str):
         ET.SubElement(entry_elem, "link", {"href": entry["url"]})
         ET.SubElement(entry_elem, "id").text = entry["id"]
         ET.SubElement(entry_elem, "updated").text = entry["date"]
-        ET.SubElement(
-            entry_elem, "summary", {"type": "html"}
-        ).text = f'<a href="{entry["url"]}">Read on lightnoveltranslations.com</a>'
+        ET.SubElement(entry_elem, "summary", {"type": "html"}).text = (
+            f'<a href="{entry["url"]}">Read on lightnoveltranslations.com</a>'
+        )
         ET.SubElement(
             entry_elem,
             "category",
@@ -99,7 +100,9 @@ def generate_feed(feed_path: str, scraping_url: str, database_path: str):
     # Write XML document.
     with open(feed_path, "wt", encoding="utf-8") as fp:
         # Manually write XML header to allow adding a stylesheet.
-        fp.write("<?xml version='1.0' encoding='utf-8'?>\n<?xml-stylesheet href='rss-style.xsl' type='text/xsl'?>\n")
+        fp.write(
+            "<?xml version='1.0' encoding='utf-8'?>\n<?xml-stylesheet href='rss-style.xsl' type='text/xsl'?>\n"
+        )
         ET.ElementTree(feed).write(fp, encoding="unicode", xml_declaration=False)
 
 
@@ -110,6 +113,7 @@ def parse_args():
     parser.add_argument("feed_path", help="where the feed should be written")
     parser.add_argument("db_path", help="path to the SQLite database")
     return parser.parse_args()
+
 
 if __name__ == "__main__":
     scraping_url = "https://lightnovelstranslations.com/latest-updates/"
