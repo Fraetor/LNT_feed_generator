@@ -1,0 +1,12 @@
+[Unit]
+Description=Regularly regenerate the lightNovelTranslations Atom feed.
+Documentation=https://github.com/Fraetor/LNT_feed_generator
+
+[Timer]
+OnCalendar=*:00/30:00
+RandomizedDelaySec=900
+FixedRandomDelay=true
+Persistent=true
+
+[Install]
+WantedBy=timers.target

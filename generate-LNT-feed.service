@@ -1,0 +1,9 @@
+[Unit]
+Description=Generate LNT Feed Service
+Documentation=https://github.com/Fraetor/LNT_feed_generator
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/root/LNT_feed_generator/gen_feed.py /var/www/html/feed/lightnoveltranslations.atom /var/www/feed.db
